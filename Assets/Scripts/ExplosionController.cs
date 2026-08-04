@@ -54,7 +54,6 @@ public class ExplosionController : MonoBehaviour
         yield return new WaitForSeconds(0.05f);
         flash.intensity = 0f;
         yield return new WaitForSeconds(delayTime);
-        Debug.Log("kachow");
         Destroy(gameObject);
     }
 }
