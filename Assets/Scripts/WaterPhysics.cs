@@ -1,71 +1,63 @@
-using NUnit.Framework;
+
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class WaterPhysics : MonoBehaviour
 {
     public float upforce;
-    private List<GameObject> objects = new List<GameObject>();
-    private List<GameObject> removals = new List<GameObject>();
+    private float surface;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    private struct SubmergedObject
+    {
+        public Rigidbody rb;
+        public Collider col;
+    }
+
+    private Dictionary<GameObject, SubmergedObject> submergedobjects = new Dictionary<GameObject, SubmergedObject>();
     void Start()
     {
-        
+        surface = transform.position.y;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        foreach (GameObject other in objects)
+        surface = transform.position.y;
+        foreach (var thing in submergedobjects)
         {
-            print("wazzah");
-            if (other != null)
+            SubmergedObject submergedobject = thing.Value;
+            if(thing.Key != null)
             {
-                Rigidbody objectrb = other.GetComponent<Rigidbody>();
-                Transform objecttr = other.transform;
-                Bounds bounds = other.GetComponent<Collider>().bounds;
+                Bounds bounds = submergedobject.col.bounds;
 
                 float miny = bounds.min.y;
                 float maxy = bounds.max.y;
                 float height = maxy - miny;
                 float volume = bounds.size.x * bounds.size.y * bounds.size.z;
 
-                float depth = Mathf.Clamp(transform.position.y - miny, 0f, height);
+                float depth = Mathf.Clamp(surface - miny, 0f, height);
                 float submerged = volume * (depth / height);
 
-                objectrb.AddForce(Vector3.up * submerged * upforce);
-                print(submerged);
-
-
-            }
-            else
-            {
-                removals.Add(other);
+                submergedobject.rb.AddForce(Vector3.up * submerged * upforce);
             }
         }
-        foreach (GameObject thing in removals)
-        {
-            objects.Remove(thing);
-            print("twin");
-        }
-        removals.Clear();
-
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.attachedRigidbody != null && other.attachedRigidbody.gameObject == other.gameObject && !objects.Contains(other.gameObject))
-        { 
-            objects.Add(other.gameObject);
+        if (other.gameObject.TryGetComponent<Rigidbody>(out Rigidbody objectrb) && other.attachedRigidbody.gameObject == other.gameObject)
+        {
+            GameObject thing = other.gameObject;
+            submergedobjects.Add(thing, new SubmergedObject {rb = objectrb, col = other});
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if(objects.Contains(other.gameObject))
-        {
-            objects.Remove(other.gameObject);
-        }
+        submergedobjects.Remove(other.gameObject);
     }
 }
