@@ -18,9 +18,12 @@ public class PlayerMovement : MonoBehaviour
     public float groundacceleration;
     public float airacceleration;
     public float jumpforce;
+    public float drag;
     
     private float camy;
     private bool groundcheck;
+
+    private bool dragapplied = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -54,13 +57,23 @@ public class PlayerMovement : MonoBehaviour
         {
             baseacceleration = groundacceleration;
             basemovespeed = groundmovespeed;
-            rb.linearDamping = 5f;
+            if (dragapplied == false)
+            {
+                rb.linearDamping += drag;
+                dragapplied = true;
+            }
+            
         }
         else
         {
             baseacceleration = airacceleration;
             basemovespeed = airmovespeed;
-            rb.linearDamping = 0.1f;
+            if (dragapplied == true)
+            {
+                rb.linearDamping -= drag;
+                dragapplied = false;
+            }
+            
         }
 
         float acceleration = baseacceleration * Time.deltaTime;

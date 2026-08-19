@@ -8,6 +8,10 @@ using UnityEngine;
 public class WaterPhysics : MonoBehaviour
 {
     public float upforce;
+    public float drag;
+    public float currentforce;
+    public float currentspeed;
+
     private float surface;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
@@ -41,8 +45,15 @@ public class WaterPhysics : MonoBehaviour
 
                 float depth = Mathf.Clamp(surface - miny, 0f, height);
                 float submerged = volume * (depth / height);
+                Rigidbody rb = submergedobject.rb;
 
-                submergedobject.rb.AddForce(Vector3.up * submerged * upforce);
+                rb.AddForce(Vector3.up * submerged * upforce);
+
+                if(rb.linearVelocity.z < currentspeed)
+                {
+                    rb.AddForce(Vector3.forward * submerged * currentforce);
+                }
+                    
             }
         }
     }
@@ -52,12 +63,17 @@ public class WaterPhysics : MonoBehaviour
         if (other.gameObject.TryGetComponent<Rigidbody>(out Rigidbody objectrb) && other.attachedRigidbody.gameObject == other.gameObject)
         {
             GameObject thing = other.gameObject;
+            objectrb.linearDamping += drag;
             submergedobjects.Add(thing, new SubmergedObject {rb = objectrb, col = other});
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
+        if (other.gameObject.TryGetComponent<Rigidbody>(out Rigidbody objectrb))
+        {
+            objectrb.linearDamping -= drag;
+        }
         submergedobjects.Remove(other.gameObject);
     }
 }
