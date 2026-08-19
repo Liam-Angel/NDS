@@ -57,16 +57,13 @@ public class LightningSpawner : MonoBehaviour
                     peak = new Vector3(col.bounds.center.x, maxy, col.bounds.center.z);
                 }
             }
+            //GameObject hitobject = hitcol.gameObject;
 
             if (peak == new Vector3(0, 0, 0))
             {
                 peak = new Vector3(pos.x, floor, pos.z);
             }
 
-            if (hitcol != null && hitcol.gameObject.CompareTag("Player") != true)
-            {
-                Destroy (hitcol.gameObject);
-            }
 
             print(peak);
             Instantiate(kaboom, peak, transform.rotation);
@@ -79,5 +76,10 @@ public class LightningSpawner : MonoBehaviour
     {
         Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
         Gizmos.DrawCube(pos, new Vector3(range * 2, boxheight * 2, range * 2));
+    }
+
+    void DetachChunk(GameObject chunk)
+    {
+       
     }
 }
