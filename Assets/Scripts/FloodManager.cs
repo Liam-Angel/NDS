@@ -23,24 +23,25 @@ public class FloodManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (waterstate == 1 && transform.position.y > maxheight)
+        {
+            waterstate = 0;
+        }
+        if (waterstate == -1 && transform.position.y < minheight)
+        {
+            waterstate = 0;
+        }
+
         transform.position += new Vector3(0, speed * waterstate, 0);
     }
 
     private void Rise()
     {
-        while (transform.position.y < maxheight)
-        {
-            waterstate = 1;
-        }
-        waterstate = 0;
+        waterstate = 1;
     }
 
     private void Lower()
     {
-        while (transform.position.y > minheight)
-        {
-            waterstate = -1;
-        }
-        waterstate = 0;
+        waterstate = -1;
     }
 }

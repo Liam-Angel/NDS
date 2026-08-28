@@ -9,17 +9,18 @@ public class DisasterManager : MonoBehaviour
     public static event Action DisasterStart;
     public static event Action DisasterStop;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private Coroutine gameroutine;
     void OnEnable()
     {
-        StartCoroutine(CountDown());
+        gameroutine = StartCoroutine(CountDown());
     }
 
     // Update is called once per frame
     void OnDisable()
     {
-        if(CountDown() != null)
+        if(gameroutine != null)
         {
-            StopCoroutine(CountDown());
+            StopCoroutine(gameroutine);
         }
     }
 
@@ -32,5 +33,6 @@ public class DisasterManager : MonoBehaviour
         print("done");
         yield return new WaitForSeconds(gametime);
         DisasterStop?.Invoke();
+        print("again");
     }
 }

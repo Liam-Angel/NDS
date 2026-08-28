@@ -1,5 +1,7 @@
-using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.Rendering;
 
 public class LightningSpawner : MonoBehaviour
 {
@@ -20,54 +22,60 @@ public class LightningSpawner : MonoBehaviour
     public float zmin;
     public float zmax;
 
+    private bool game;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void OnEnable()
     {
+        DisasterManager.DisasterStart += Go;
+        DisasterManager.DisasterStop += Stop;
         StartCoroutine(DelayAction(interval));
     }
 
     // Update is called once per frame
-    void Update()
+    void OnDisable()
     {
-  
+        DisasterManager.DisasterStart -= Go;
+        DisasterManager.DisasterStop -= Stop;
     }
 
     IEnumerator DelayAction(float delayTime)
     {
         while(true)
         {
-            Collider hitcol = null;
             yield return new WaitForSeconds(delayTime);
-            
-            pos = new Vector3(Random.Range(xmin, xmax), height, Random.Range(zmin, zmax));
-            Collider[] hits = Physics.OverlapBox(pos, new Vector3(range, boxheight, range), transform.rotation, layers);
-            Vector3 peak = new Vector3(0, 0, 0);
-            float maxy = -90;
-
-            
-
-            foreach (Collider col in hits)
+            if (game == true)
             {
+                Collider hitcol = null;
+                pos = new Vector3(Random.Range(xmin, xmax), height, Random.Range(zmin, zmax));
+                Collider[] hits = Physics.OverlapBox(pos, new Vector3(range, boxheight, range), transform.rotation, layers);
+                Vector3 peak = new Vector3(0, 0, 0);
+                float maxy = -90;
 
-                float topy = col.bounds.max.y;
-                if (topy > maxy)
+
+
+                foreach (Collider col in hits)
                 {
-                    maxy = topy;   
-                    hitcol = col;
-                    peak = new Vector3(col.bounds.center.x, maxy, col.bounds.center.z);
+
+                    float topy = col.bounds.max.y;
+                    if (topy > maxy)
+                    {
+                        maxy = topy;
+                        hitcol = col;
+                        peak = new Vector3(col.bounds.center.x, maxy, col.bounds.center.z);
+                    }
                 }
+                //GameObject hitobject = hitcol.gameObject;
+
+                if (peak == new Vector3(0, 0, 0))
+                {
+                    peak = new Vector3(pos.x, floor, pos.z);
+                }
+
+
+                print(peak);
+                Instantiate(kaboom, peak, transform.rotation);
             }
-            //GameObject hitobject = hitcol.gameObject;
-
-            if (peak == new Vector3(0, 0, 0))
-            {
-                peak = new Vector3(pos.x, floor, pos.z);
-            }
-
-
-            print(peak);
-            Instantiate(kaboom, peak, transform.rotation);
-
         }
     }
         
@@ -81,5 +89,15 @@ public class LightningSpawner : MonoBehaviour
     void DetachChunk(GameObject chunk)
     {
        
+    }
+
+    void Go()
+    {
+        game = true;
+    }
+
+    void Stop()
+    {
+        game = false;
     }
 }
