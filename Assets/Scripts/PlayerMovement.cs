@@ -26,17 +26,22 @@ public class PlayerMovement : MonoBehaviour
     private bool dragapplied = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
         playerinput = new PlayerControls();
+    }
+    void OnEnable()
+    {
         playerinput.Enable();
         playerinput.Player.Jump.performed += OnJumpPerformed;
     }
 
     void OnDisable()
     {
-        playerinput.Player.Jump.performed -= OnJumpPerformed;
+        playerinput.Player.Disable();
         playerinput.Disable();
+        playerinput.Player.Jump.performed -= OnJumpPerformed;
+        
     }
 
     // Update is called once per frame

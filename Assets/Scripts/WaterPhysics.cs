@@ -43,7 +43,7 @@ public class WaterPhysics : MonoBehaviour
                 float height = maxy - miny;
                 float volume = bounds.size.x * bounds.size.y * bounds.size.z;
 
-                float depth = Mathf.Clamp(surface - miny, 0f, height);
+                float depth = Mathf.Clamp(surface - miny, 0f, height * 10);
                 float submerged = volume * (depth / height);
                 Rigidbody rb = submergedobject.rb;
 
@@ -64,6 +64,7 @@ public class WaterPhysics : MonoBehaviour
         {
             GameObject thing = other.gameObject;
             objectrb.linearDamping += drag;
+            objectrb.angularDamping += drag;
             submergedobjects.Add(thing, new SubmergedObject {rb = objectrb, col = other});
         }
     }
@@ -73,6 +74,7 @@ public class WaterPhysics : MonoBehaviour
         if (other.gameObject.TryGetComponent<Rigidbody>(out Rigidbody objectrb))
         {
             objectrb.linearDamping -= drag;
+            objectrb.angularDamping -= drag;
         }
         submergedobjects.Remove(other.gameObject);
     }

@@ -7,12 +7,19 @@ public class ShootController : MonoBehaviour
     [SerializeField] GameObject bullet;
     [SerializeField] PlayerControls playercontrols;
 
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void OnEnable()
     {
         playercontrols = new PlayerControls();
         playercontrols.Enable();
         playercontrols.Player.Shoot.performed += OnShootPerformed;
+    }
+
+    private void OnDisable()
+    {
+        playercontrols.Disable();
+        playercontrols.Player.Shoot.performed -= OnShootPerformed;
     }
 
     // Update is called once per frame

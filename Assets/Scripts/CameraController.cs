@@ -6,10 +6,15 @@ public class CameraController : MonoBehaviour
     public float movespeed;
     private float camy;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void OnEnable()
     {
         playerinput = new PlayerInput();
         playerinput.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerinput.Disable();
     }
 
     // Update is called once per frame
