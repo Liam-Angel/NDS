@@ -119,7 +119,6 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnJumpPerformed(InputAction.CallbackContext context)
     {
-        Debug.Log("hop");
         if (groundcheck == true)
         {
             if (rb.linearVelocity.y > 0)

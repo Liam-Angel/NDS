@@ -26,13 +26,9 @@ public class DisasterManager : MonoBehaviour
 
     IEnumerator CountDown()
     {
-        print("start");
         yield return new WaitForSeconds(grace);
-        print("ready");
         DisasterStart?.Invoke();
-        print("done");
         yield return new WaitForSeconds(gametime);
         DisasterStop?.Invoke();
-        print("again");
     }
 }

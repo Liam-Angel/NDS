@@ -52,8 +52,6 @@ public class LightningSpawner : MonoBehaviour
                 Vector3 peak = new Vector3(0, 0, 0);
                 float maxy = -90;
 
-
-
                 foreach (Collider col in hits)
                 {
 
@@ -65,15 +63,11 @@ public class LightningSpawner : MonoBehaviour
                         peak = new Vector3(col.bounds.center.x, maxy, col.bounds.center.z);
                     }
                 }
-                //GameObject hitobject = hitcol.gameObject;
-
                 if (peak == new Vector3(0, 0, 0))
                 {
                     peak = new Vector3(pos.x, floor, pos.z);
                 }
 
-
-                print(peak);
                 Instantiate(kaboom, peak, transform.rotation);
             }
         }
