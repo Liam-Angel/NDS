@@ -30,7 +30,7 @@ public class ShootController : MonoBehaviour
 
     public void OnShootPerformed(InputAction.CallbackContext context)
     {
-        Instantiate(bullet, (tr.position + 1 * transform.forward), tr.rotation);
+        Instantiate(bullet, (tr.position + 3 * transform.forward), tr.rotation);
         Debug.Log("bang");
     }
 }

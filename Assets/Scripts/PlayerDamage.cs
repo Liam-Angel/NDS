@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using Unity.Mathematics;
 using UnityEngine.SceneManagement;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -39,9 +40,12 @@ public class PlayerDamage : MonoBehaviour
         GameObject thing = collision.gameObject;
         if (thing.TryGetComponent<Rigidbody>(out Rigidbody objectrb))
         {
-            Vector3 dif = rb.linearVelocity - objectrb.linearVelocity;
-            float damage = (dif.magnitude * (objectrb.linearVelocity.magnitude * objectrb.mass) * damagescale);
-
+            Vector3 pv = rb.linearVelocity.normalized;
+            Vector3 ov = objectrb.linearVelocity.normalized;
+            float dif = Vector3.Dot(pv, ov);
+            
+            float damage = (dif * (objectrb.linearVelocity.magnitude - rb.linearVelocity.magnitude) * (objectrb.mass * objectrb.linearVelocity.magnitude) * damagescale);
+            print(dif);
             if(damage > threshold)
             {
                 health -= damage;

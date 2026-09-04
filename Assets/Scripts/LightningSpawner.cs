@@ -41,35 +41,33 @@ public class LightningSpawner : MonoBehaviour
 
     IEnumerator DelayAction(float delayTime)
     {
-        while(true)
+        while(true) // loops forever
         {
-            yield return new WaitForSeconds(delayTime);
-            if (game == true)
+            yield return new WaitForSeconds(delayTime); // waits a set amount of time
+            Collider hitcol = null;
+            pos = new Vector3(Random.Range(xmin, xmax), height, Random.Range(zmin, zmax)); // picks a random spot on the map
+            Collider[] hits = Physics.OverlapBox(pos, new Vector3(range, boxheight, range), transform.rotation, layers); // gets the collider of every object in th area
+            Vector3 peak = new Vector3(0, 0, 0);
+            float maxy = -90;
+
+            foreach (Collider col in hits) // iterates through each collider
             {
-                Collider hitcol = null;
-                pos = new Vector3(Random.Range(xmin, xmax), height, Random.Range(zmin, zmax));
-                Collider[] hits = Physics.OverlapBox(pos, new Vector3(range, boxheight, range), transform.rotation, layers);
-                Vector3 peak = new Vector3(0, 0, 0);
-                float maxy = -90;
 
-                foreach (Collider col in hits)
+                float topy = col.bounds.max.y; // gets the highest point of the collider
+                if (topy > maxy) // if the current value is larger than the previous largest
                 {
-
-                    float topy = col.bounds.max.y;
-                    if (topy > maxy)
-                    {
-                        maxy = topy;
-                        hitcol = col;
-                        peak = new Vector3(col.bounds.center.x, maxy, col.bounds.center.z);
-                    }
+                    maxy = topy; // saves as largest
+                    hitcol = col;
+                    peak = new Vector3(col.bounds.center.x, maxy, col.bounds.center.z); // position of the highest point at the center of the object
                 }
-                if (peak == new Vector3(0, 0, 0))
-                {
-                    peak = new Vector3(pos.x, floor, pos.z);
-                }
-
-                Instantiate(kaboom, peak, transform.rotation);
             }
+
+            if (peak == new Vector3(0, 0, 0)) // strikes ground level if no objects are found
+            {
+                peak = new Vector3(pos.x, floor, pos.z);
+            }
+
+            Instantiate(kaboom, peak, transform.rotation); // creates an explosion          
         }
     }
         

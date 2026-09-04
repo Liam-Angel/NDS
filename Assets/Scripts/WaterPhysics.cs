@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -57,11 +58,12 @@ public class WaterPhysics : MonoBehaviour
             }
         }
     }
-
+    
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.TryGetComponent<Rigidbody>(out Rigidbody objectrb) && other.attachedRigidbody.gameObject == other.gameObject)
         {
+            
             GameObject thing = other.gameObject;
             objectrb.linearDamping += drag;
             objectrb.angularDamping += drag;
@@ -71,11 +73,6 @@ public class WaterPhysics : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.TryGetComponent<Rigidbody>(out Rigidbody objectrb))
-        {
-            objectrb.linearDamping -= drag;
-            objectrb.angularDamping -= drag;
-        }
         submergedobjects.Remove(other.gameObject);
     }
 }

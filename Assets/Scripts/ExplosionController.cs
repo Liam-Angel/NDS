@@ -31,13 +31,13 @@ public class ExplosionController : MonoBehaviour
     public void ApplyExplosionForce()
     {
         Vector3 pos = transform.position;
-        Collider[] colliders = Physics.OverlapSphere(pos, radius, layers);
+        Collider[] colliders = Physics.OverlapSphere(pos, radius, layers); //gets all colliders in a set radius
 
         foreach (Collider collider in colliders)
         {
-            if (collider.TryGetComponent<Rigidbody>(out Rigidbody rb))
+            if (collider.TryGetComponent<Rigidbody>(out Rigidbody rb)) //gets rigidbody component from collider if it has one
             {
-                rb.AddExplosionForce(power, pos, radius, upwardsmodifier, forcemode);
+                rb.AddExplosionForce(power, pos, radius, upwardsmodifier, forcemode); //applies force to the rigidbody
             }
         }
     }
@@ -50,9 +50,9 @@ public class ExplosionController : MonoBehaviour
 
     IEnumerator DelayAction(float delayTime)
     {
-        flash.intensity = bright;
+        flash.intensity = bright; //makes bright light
         yield return new WaitForSeconds(0.05f);
-        flash.intensity = 0f;
+        flash.intensity = 0f; //turns off light
         yield return new WaitForSeconds(delayTime);
         Destroy(gameObject);
     }
