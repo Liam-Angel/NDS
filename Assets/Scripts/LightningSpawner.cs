@@ -41,6 +41,7 @@ public class LightningSpawner : MonoBehaviour
 
     IEnumerator DelayAction(float delayTime)
     {
+        yield return new WaitForSeconds(5);
         while(true) // loops forever
         {
             yield return new WaitForSeconds(delayTime); // waits a set amount of time

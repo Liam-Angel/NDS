@@ -14,23 +14,23 @@ public class PlayerDamage : MonoBehaviour
     public float maxair;
     public float damagescale;
     public float threshold;
-            
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public float masseffect;
+    public float difeffect;
+    private bool drowning = false;
+    private bool dead = false;
 
     // Update is called once per frame
     void Update()
     {
-        if(health <= 0)
+        if (health <= 0 && dead == false)
         {
             StartCoroutine(Die());
+            dead = true;
         }
 
-        if(cam.position.y < water.position.y)
+        if (cam.position.y < water.position.y && drowning == false)
         {
+            drowning = true;
             StartCoroutine(Drowning());
         }
     }
@@ -40,13 +40,17 @@ public class PlayerDamage : MonoBehaviour
         GameObject thing = collision.gameObject;
         if (thing.TryGetComponent<Rigidbody>(out Rigidbody objectrb))
         {
-            Vector3 pv = rb.linearVelocity.normalized;
-            Vector3 ov = objectrb.linearVelocity.normalized;
-            float dif = Vector3.Dot(pv, ov);
-            
-            float damage = (dif * (objectrb.linearVelocity.magnitude - rb.linearVelocity.magnitude) * (objectrb.mass * objectrb.linearVelocity.magnitude) * damagescale);
+            Vector3 pv = rb.linearVelocity.normalized; //normalize the player velocity
+            Vector3 ov = objectrb.linearVelocity.normalized; //normalize the object velocity
+            float dif = Vector3.Angle(pv, ov); //difference in velocity direction between object and player
+
+            float applieddif = Mathf.Clamp(dif * difeffect, 0, 180); //adjusts the dif value to work with speed dif calculation
+                                                                     //
+            float speeddif = Mathf.Clamp((objectrb.linearVelocity.magnitude * dif) - rb.linearVelocity.magnitude, 0.1f, 99); //difference in speed relative to direction
+
+            float damage = (speeddif * damagescale); // calculates the damage value
             print(dif);
-            if(damage > threshold)
+            if (damage > threshold)
             {
                 health -= damage;
             }
@@ -63,12 +67,13 @@ public class PlayerDamage : MonoBehaviour
             {
                 health--;
             }
-            else 
+            else
             {
                 air--;
-            }     
+            }
         }
         air = maxair;
+        drowning = false;
     }
 
     IEnumerator Die()

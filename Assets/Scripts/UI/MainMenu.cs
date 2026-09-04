@@ -27,7 +27,6 @@ public class MainMenu : MonoBehaviour
 
     private void PlayButtonCallBack()
     {
-        print("i'm just a lawnmower");
         SceneManager.LoadScene("SampleScene");
     }
 

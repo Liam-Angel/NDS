@@ -25,7 +25,7 @@ public class PlayerInputManager : MonoBehaviour
 
     private void OnEscapePerformed(InputAction.CallbackContext context)
     {
-        showing = !showing;
-        menu.SetActive(showing);
+        showing = !showing; //toggle boolean value
+        menu.SetActive(showing); //enable or disable menu depending on boolean value
     }
 }
