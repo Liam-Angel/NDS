@@ -73,6 +73,10 @@ public class WaterPhysics : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        SubmergedObject submergedobject = submergedobjects[other.gameObject];
+        Rigidbody objectrb = submergedobject.rb;
+        objectrb.linearDamping -= drag;
+        objectrb.angularDamping -= drag;
         submergedobjects.Remove(other.gameObject);
     }
 }

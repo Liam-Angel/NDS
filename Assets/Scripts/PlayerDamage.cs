@@ -18,6 +18,7 @@ public class PlayerDamage : MonoBehaviour
     public float difeffect;
     private bool drowning = false;
     private bool dead = false;
+    public float lightningdamage;
 
     // Update is called once per frame
     void Update()
@@ -43,13 +44,14 @@ public class PlayerDamage : MonoBehaviour
             Vector3 pv = rb.linearVelocity.normalized; //normalize the player velocity
             Vector3 ov = objectrb.linearVelocity.normalized; //normalize the object velocity
             float dif = Vector3.Angle(pv, ov); //difference in velocity direction between object and player
+            dif = Mathf.Clamp(dif, 0, difeffect); //adjusts the dif value to work with speed dif calculation
 
-            float applieddif = Mathf.Clamp(dif * difeffect, 0, 180); //adjusts the dif value to work with speed dif calculation
-                                                                     //
-            float speeddif = Mathf.Clamp((objectrb.linearVelocity.magnitude * dif) - rb.linearVelocity.magnitude, 0.1f, 99); //difference in speed relative to direction
+            float applieddif = math.remap(0, 110, -1, 1, dif);
+            float speeddif = Mathf.Clamp((objectrb.linearVelocity.magnitude) + (rb.linearVelocity.magnitude * dif), 0.1f, 900); //difference in speed relative to direction
 
             float damage = (speeddif * damagescale); // calculates the damage value
-            print(dif);
+            
+            print(damage);
             if (damage > threshold)
             {
                 health -= damage;

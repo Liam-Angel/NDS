@@ -22,7 +22,7 @@ public class LightningSpawner : MonoBehaviour
     public float zmin;
     public float zmax;
 
-    private bool game;
+    private bool game = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void OnEnable()
@@ -41,7 +41,7 @@ public class LightningSpawner : MonoBehaviour
 
     IEnumerator DelayAction(float delayTime)
     {
-        yield return new WaitForSeconds(5);
+        yield return new WaitUntil(() => game);
         while(true) // loops forever
         {
             yield return new WaitForSeconds(delayTime); // waits a set amount of time

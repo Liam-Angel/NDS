@@ -3,12 +3,12 @@ using Unity.Mathematics;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 
 public class HudManager : MonoBehaviour
 {
     public TextMeshProUGUI text;
-    public float grace;
-    public float gametime;
+    public DisasterManager disasterManager;
     public float rest;
     public RectTransform bar;
     public float height;
@@ -17,7 +17,9 @@ public class HudManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        StartCoroutine(GameTimer());
+        float grace = disasterManager.grace;
+        float gametime = disasterManager.gametime;
+        StartCoroutine(GameTimer(grace, gametime));
     }
 
     // Update is called once per frame
@@ -25,7 +27,7 @@ public class HudManager : MonoBehaviour
     {
         bar.sizeDelta = new Vector2(math.remap(0, 100, 0, width, playerdamage.health), height);
     }
-    IEnumerator GameTimer()
+    IEnumerator GameTimer(float grace, float gametime)
     {
         float timer = grace;
         while(timer > 0)

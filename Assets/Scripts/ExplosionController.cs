@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class ExplosionController : MonoBehaviour
 {
@@ -32,10 +33,15 @@ public class ExplosionController : MonoBehaviour
     {
         Vector3 pos = transform.position;
         Collider[] colliders = Physics.OverlapSphere(pos, radius, layers); //gets all colliders in a set radius
-
+        
         foreach (Collider collider in colliders)
         {
-            if (collider.TryGetComponent<Rigidbody>(out Rigidbody rb)) //gets rigidbody component from collider if it has one
+            if(collider.gameObject.layer == 7) //if the object is on the player layer
+            {
+                collider.gameObject.TryGetComponent<PlayerDamage>(out PlayerDamage playerDamage); // gets player damage script
+                playerDamage.health -= playerDamage.lightningdamage; //deals damage
+            }
+            else if (collider.TryGetComponent<Rigidbody>(out Rigidbody rb)) //gets rigidbody component from collider if it has one
             {
                 rb.AddExplosionForce(power, pos, radius, upwardsmodifier, forcemode); //applies force to the rigidbody
             }

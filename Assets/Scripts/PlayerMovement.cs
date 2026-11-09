@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Mathematics;
 using UnityEngine.InputSystem;
 
 
@@ -19,6 +20,11 @@ public class PlayerMovement : MonoBehaviour
     public float airacceleration;
     public float jumpforce;
     public float drag;
+    public float grounddist;
+    public float hoverstrength;
+    public float stepspeed;
+    public float fallcounter;
+    float speeddistscale;
     
     private float camy;
     private bool groundcheck;
@@ -45,19 +51,19 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         float basemovespeed;
         float baseacceleration;
-        groundcheck = Physics.CheckSphere(ground.position, 0.46f, groundmask);
+        groundcheck = Physics.CheckSphere(ground.position, grounddist, groundmask);
         Vector2 playermove = playerinput.Player.Movement.ReadValue<Vector2>();
         Vector2 mouseinput = playerinput.Player.Look.ReadValue<Vector2>();
         float forwardspeed = Vector3.Dot(rb.linearVelocity, transform.forward);
         float sidespeed = Vector3.Dot(rb.linearVelocity, transform.right);
 
         playermove.Normalize();
-      
 
+        RaycastHit hit;
         if (groundcheck == true)
         {
             baseacceleration = groundacceleration;
@@ -67,6 +73,28 @@ public class PlayerMovement : MonoBehaviour
                 rb.linearDamping += drag;
                 dragapplied = true;
             }
+
+            if (Physics.Raycast(ground.position, new Vector3(0, -1, 0), out hit, grounddist, groundmask) == true)
+            {
+
+                float mapdist = math.remap(0f, grounddist * grounddist, grounddist * grounddist, 0f, hit.distance * hit.distance);
+                float upforce = mapdist * hoverstrength * Time.deltaTime;
+                upforce *= Mathf.Clamp(-rb.linearVelocity.y * fallcounter, 1, 100);
+
+                //print(upforce + " " + -rb.linearVelocity.y);
+
+                if (upforce + rb.linearVelocity.y > (stepspeed * mapdist)) //if the force will make it go over the max speed
+                {
+                    upforce = stepspeed * mapdist - rb.linearVelocity.y; //makes the force just enough to hit max speed
+                }
+                if(upforce > 0) //prevents a negative value from dragging the player down
+                {
+                    rb.linearVelocity += new Vector3(0, upforce, 0);
+                }
+                
+            }
+
+            
             
         }
         else
@@ -81,7 +109,7 @@ public class PlayerMovement : MonoBehaviour
             
         }
 
-        float acceleration = baseacceleration * Time.deltaTime;
+        float acceleration = baseacceleration;
         float movespeed = basemovespeed;
         float forwardaddspeed = movespeed - (forwardspeed * playermove.y);
 
@@ -97,7 +125,7 @@ public class PlayerMovement : MonoBehaviour
                 acceleration = forwardaddspeed;
             }
             rb.linearVelocity += (playermove.y * acceleration * transform.forward);
-            acceleration = baseacceleration * Time.deltaTime;
+            acceleration = baseacceleration;
         }
 
         float sideaddspeed = movespeed - (sidespeed * playermove.x);
@@ -108,7 +136,7 @@ public class PlayerMovement : MonoBehaviour
                 acceleration = sideaddspeed;
             }
             rb.linearVelocity += (playermove.x * acceleration * transform.right);
-            acceleration = baseacceleration * Time.deltaTime;
+            acceleration = baseacceleration;
         }
 
         transform.Rotate(0f, mouseinput.x, 0);
