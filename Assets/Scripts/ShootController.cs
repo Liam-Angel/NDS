@@ -6,6 +6,7 @@ public class ShootController : MonoBehaviour
     [SerializeField] Transform tr;
     [SerializeField] GameObject bullet;
     [SerializeField] PlayerControls playercontrols;
+    [SerializeField] LayerMask layers;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -30,7 +31,9 @@ public class ShootController : MonoBehaviour
 
     public void OnShootPerformed(InputAction.CallbackContext context)
     {
-        Instantiate(bullet, (tr.position + 3 * transform.forward), tr.rotation);
-        Debug.Log("bang");
+        if(Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 200, layers))
+        {
+            Instantiate(bullet, hit.point, Quaternion.identity);
+        }
     }
 }

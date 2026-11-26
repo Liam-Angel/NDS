@@ -79,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
 
                 float mapdist = math.remap(0f, grounddist * grounddist, grounddist * grounddist, 0f, hit.distance * hit.distance);
                 float upforce = mapdist * hoverstrength * Time.deltaTime;
-                upforce *= Mathf.Clamp(-rb.linearVelocity.y * fallcounter, 1, 100);
+                upforce *= Mathf.Clamp(-rb.linearVelocity.y * ((fallcounter * fallcounter) * 0.7f), 1, 100);
 
                 //print(upforce + " " + -rb.linearVelocity.y);
 
